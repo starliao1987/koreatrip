@@ -20,9 +20,11 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useRef } = React;
 
-        // 1. 圖示庫
+        // ============================================================================
+        // 1. 圖示庫 (Icons) - 必須最先定義
+        // ============================================================================
         const Icons = {
             Plane: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12h20"/><path d="M13 2l9 10-9 10"/><path d="M2 12l5-5m0 10l-5-5"/></svg>, 
             MapPin: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>,
@@ -64,7 +66,9 @@
             Languages: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>,
         };
 
-        // 2. 資料
+        // ---------------------------------------------------------
+        // 2. 資料 (Data)
+        // ---------------------------------------------------------
         const esimData = [
             { id: 1, name: "韓國eSIM (SK Telecom) - 5日 1GB/日", exp: "2025-11-25", orderNo: "25KK253350828", code: "A295C26BD39E48AF971F639445BB456D" },
             { id: 2, name: "韓國eSIM (SK Telecom) - 5日 1GB/日", exp: "2025-11-25", orderNo: "25KK256350748", code: "F6E18E9BF451463FA59147B1974DB18E" }
@@ -96,12 +100,23 @@
             },
             events: [
               { 
-                  time: "07:00", title: "台灣機場接送 (去程)", koreanName: "타오위안 공항 출발", type: "transport", icon: <Icons.Car size={16} />, duration: "4.5 小時", desc: "肯驛預約 F14463084 (驗證碼 2825)。搭乘 OZ712 (11:40 起飛)。", link: "https://68666.tw/5R8s",
+                  time: "07:00", title: "台灣機場接送 (去程)", koreanName: "타오위안 공항 출발", type: "transport", icon: <Icons.Car size={16} />, duration: "4.5 小時", desc: "肯驛預約 F14463084 (驗證碼 2825)。", link: "https://68666.tw/5R8s",
                   isTaiwan: true,
                   nextMove: { to: "仁川機場", kor: "인천국제공항", time: "約 4.5 小時", type: "飛機", cost: "-" }
               },
+              {
+                  time: "09:00", title: "領取韓元 (臺灣銀行)", koreanName: "환전 수령", type: "activity", icon: <Icons.DollarSign size={16} />, duration: "20 分鐘",
+                  desc: (<span>📍 地點：第二航廈 3F 出境大廳 (8-9號櫃台中間)<br/><span className="bg-red-100 px-1 rounded text-red-800 font-bold inline-block mt-1">訂單：30684311591552 (₩200,000)</span></span>),
+                  isTaiwan: true,
+                  isWarning: false
+              },
+              {
+                  time: "11:40", title: "搭乘韓亞航空 (OZ712)", koreanName: "아시아나항공 OZ712", type: "transport", icon: <Icons.Plane size={16} />, duration: "2小時45分",
+                  desc: (<span>TPE 第2航廈 ✈️ ICN 第1航廈<br/><span className="bg-blue-100 px-1 rounded text-blue-800 font-bold inline-block mt-1">訂位代號：D4NUQ8</span></span>),
+                  isWarning: false
+              },
               { 
-                  time: "15:25", title: "抵達仁川機場 (OZ712)", koreanName: "인천국제공항", type: "transport", icon: <Icons.Plane size={16} />, duration: "1 小時", 
+                  time: "15:25", title: "抵達仁川機場 (T1)", koreanName: "인천국제공항 제1여객터미널", type: "transport", icon: <Icons.Plane size={16} />, duration: "1 小時", 
                   desc: (<span>⚠️ 下機後請盡速完成入境流程。<br/><span className="bg-yellow-200 px-1 rounded text-yellow-800 font-bold inline-block mt-1">🚌 巴士搭乘點：1樓 5B-2 或 11B-2 (6001號)</span></span>),
                   nextMove: { to: "龍山飯店", kor: "나인트리 프리미어 로카우스 호텔 서울 용산", time: "約 1.5 小時", type: "機場巴士 6001", cost: "₩17,000" },
                   isWarning: true
@@ -213,7 +228,7 @@
             day: 3,
             title: "梨大新村 & 弘大美食",
             date: "11/27 (三)",
-            image: "https://images.unsplash.com/photo-1559070135-f259b369bf87?auto=format&fit=crop&w=800&q=80",
+            image: "https://images.unsplash.com/photo-1618246146644-96c793168c9e?auto=format&fit=crop&w=800&q=80", // 更換為更有韓國街頭氛圍的圖
             weather: {
               condition: "晴時多雲",
               temp: "4°C - 8°C",
@@ -372,7 +387,7 @@
             day: 5,
             title: "益善洞 & 滿載而歸",
             date: "11/29 (五)",
-            image: "https://images.unsplash.com/photo-1517154421773-0529f29ea451?auto=format&fit=crop&w=800&q=80",
+            image: "https://images.unsplash.com/photo-1535189043414-47a3c49a0bed?auto=format&fit=crop&w=800&q=80", // 使用 Day 3 圖片代替，因為 Day 5 原圖失效
             weather: {
               condition: "多雲回溫",
               temp: "3°C - 11°C",
@@ -412,7 +427,11 @@
                   nextMove: { to: "抵達台灣", kor: "타오위안 공항 도착", time: "約 2.5 小時", type: "飛機", cost: "-" }
               },
               { time: "17:30", title: "仁川機場貴賓室", koreanName: "인천공항 라운지", type: "food", icon: <Icons.Coffee size={16} />, duration: "2 小時", desc: "長榮航空/星空聯盟貴賓室資訊。", link: "https://www.evaair.com/zh-tw/fly-prepare/at-the-airport/worldwide-airports/?countryCode=ICN" },
-              { time: "19:45", title: "搭機返台 (BR159)", koreanName: "인천공항 제1여객터미널", type: "transport", icon: <Icons.Plane size={16} />, duration: "2.5 小時", desc: "平安回家！" },
+              { 
+                time: "19:45", title: "搭乘長榮航空 (BR159)", koreanName: "에바항공 BR159", type: "transport", icon: <Icons.Plane size={16} />, duration: "2小時55分",
+                desc: (<span>ICN 第1航廈 ✈️ TPE 第2航廈<br/><span className="bg-green-100 px-1 rounded text-green-800 font-bold inline-block mt-1">皇璽桂冠艙 (I) / 訂位代號：D4NUQ8</span></span>),
+                isWarning: false
+              },
               { 
                   time: "21:40", title: "抵達台灣 & 機場接送", koreanName: "타오위안 공항 도착", type: "transport", icon: <Icons.Car size={16} />, duration: "抵達", desc: "肯驛預約 F14463095 (驗證碼 9179)。", link: "https://68666.tw/t075",
                   isTaiwan: true 
@@ -421,9 +440,7 @@
           },
         ];
 
-        // ---------------------------------------------------------
-        // 3. 輔助元件 (Helper Components)
-        // ---------------------------------------------------------
+        // --- 3. Helper Functions (必須在 KoreaTripApp 之前定義) ---
 
         // CopyRow Component
         const CopyRow = ({ kor, ch, pron }) => (
@@ -441,11 +458,7 @@
           </button>
         );
 
-        // ---------------------------------------------------------
-        // 4. 功能元件 (Functional Components)
-        // ---------------------------------------------------------
-
-        // Tax Refund Calculator
+        // Tax Refund Calculator Component
         function TaxRefundCalculator({ onClose }) {
             const [amount, setAmount] = useState('');
             const [refund, setRefund] = useState(0);
@@ -517,6 +530,8 @@
                 </div>
             );
         }
+
+        // --- 4. View Components (必須在 KoreaTripApp 之前定義) ---
 
         // EsimContent
         function EsimContent() {
@@ -619,10 +634,6 @@
             );
         }
 
-        // ---------------------------------------------------------
-        // 5. 頁面元件 (View Components)
-        // ---------------------------------------------------------
-
         // ChecklistView
         function ChecklistView() {
           const [todos, setTodos] = useState(initialTodos);
@@ -723,13 +734,30 @@
           };
 
           const openNaverMap = (koreanName) => {
-            const url = `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(koreanName)}`;
-            window.open(url, '_blank');
+            // 使用 Naver Map 手機網頁版搜尋 (fallback)
+            // 嘗試使用 URL Scheme 喚醒 App: nmap://search?query={查詢詞}&appname={您的App名稱}
+            const appUrl = `nmap://search?query=${encodeURIComponent(koreanName)}&appname=com.example.myapp`;
+            // 如果沒有 App 則使用網頁版
+            const webUrl = `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(koreanName)}`;
+            
+            // 嘗試開啟 App
+            window.location.href = appUrl;
+            
+            // 設定一個 timeout，如果 App 沒有開啟則跳轉到網頁版
+            setTimeout(() => {
+                window.open(webUrl, '_blank');
+            }, 500);
           };
           
+          // 路線按鈕功能：使用 Naver Map App 連結
           const openRoute = (from, to) => {
-            const url = `https://m.map.naver.com/route.nhn?menu=route&sname=${encodeURIComponent(from)}&dname=${encodeURIComponent(to)}&pathType=1`;
-            window.open(url, '_blank');
+            // nmap://route/public?slat=&slng=&sname={起點}&dlat=&dlng=&dname={終點}&appname={您的App名稱}
+            // 若 App 喚醒失敗則使用網頁版
+            const appUrl = `nmap://route/public?sname=${encodeURIComponent(from)}&dname=${encodeURIComponent(to)}&appname=com.example.myapp`;
+            const webUrl = `https://m.map.naver.com/route.nhn?menu=route&sname=${encodeURIComponent(from)}&dname=${encodeURIComponent(to)}&pathType=1`;
+            
+            window.location.href = appUrl;
+            setTimeout(() => { window.open(webUrl, '_blank'); }, 500);
           };
 
           const openLiveWeather = () => {
@@ -740,10 +768,12 @@
             navigator.clipboard.writeText(text);
           };
           
+          // 判斷是否為警告/重要描述 (例如機場巴士)
           const isWarningDesc = (event) => {
               return event.isWarning || (typeof event.desc === 'string' && event.desc.includes('⚠️'));
           };
 
+          // 渲染描述內容 (支援 JSX 或 String)
           const renderDesc = (event) => {
               return event.desc;
           };
@@ -1129,7 +1159,12 @@
                                                     <Icons.Copy size={12} /> 複製韓文
                                                 </button>
                                                 <button 
-                                                    onClick={() => window.open(`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(item.kor)}`, '_blank')}
+                                                    onClick={() => {
+                                                        const url = `nmap://search?query=${encodeURIComponent(item.kor)}&appname=com.example.myapp`;
+                                                        const webUrl = `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(item.kor)}`;
+                                                        window.location.href = url;
+                                                        setTimeout(() => { window.open(webUrl, '_blank'); }, 500);
+                                                    }}
                                                     className="flex-1 bg-[#03C75A] text-white py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 hover:bg-[#02b350] active:scale-95 transition-all shadow-sm"
                                                 >
                                                     <Icons.Map size={12} /> Naver Map
@@ -1162,7 +1197,12 @@
                                             <Icons.Copy size={14} /> 複製店名
                                         </button>
                                         <button 
-                                            onClick={() => window.open(`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(zoomedItem.koreanName)}`, '_blank')}
+                                            onClick={() => {
+                                                const url = `nmap://search?query=${encodeURIComponent(zoomedItem.koreanName)}&appname=com.example.myapp`;
+                                                const webUrl = `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(zoomedItem.koreanName)}`;
+                                                window.location.href = url;
+                                                setTimeout(() => { window.open(webUrl, '_blank'); }, 500);
+                                            }}
                                             className="flex-1 bg-[#03C75A] text-white py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-1 hover:bg-[#02b350] active:scale-95 transition-all shadow-sm"
                                         >
                                             <Icons.Map size={14} /> 導航至此
