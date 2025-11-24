@@ -16,54 +16,54 @@
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
     </style>
 </head>
-<body>
+<body class="bg-[#F8F9FA]">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // ============================================================================
-        // 1. 圖示庫 (Icons) - 必須最先定義
-        // ============================================================================
+        // ---------------------------------------------------------
+        // 1. 圖示庫 (Icons)
+        // ---------------------------------------------------------
         const Icons = {
-            Plane: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12h20"/><path d="M13 2l9 10-9 10"/><path d="M2 12l5-5m0 10l-5-5"/></svg>, 
-            MapPin: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>,
-            Utensils: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>,
-            ShoppingBag: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>,
-            Camera: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>,
-            Coffee: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>,
-            Moon: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
-            CheckSquare: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>,
-            Calendar: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
-            Info: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>,
-            ChevronRight: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>,
-            Train: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><path d="M2 12h20"/><path d="M4 7h16"/></svg>,
-            Bus: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M7 21v-2"/><path d="M17 21v-2"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="8" x2="21" y2="8"/></svg>,
-            AlertTriangle: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
-            Hotel: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 21h18"/><path d="M5 21V7"/><path d="M19 21V7"/><path d="M5 7a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v14"/><path d="M15 9a2 2 0 0 1 2-2h2"/></svg>,
-            Clock: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
-            Map: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>,
-            Copy: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>,
-            ExternalLink: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>,
-            Sun: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>,
-            CloudRain: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>,
-            Snowflake: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/><path d="M20 16l-4-4 4-4"/><path d="M4 8l4 4-4 4"/><path d="M16 4l-4 4-4-4"/><path d="M8 20l4-4 4 4"/></svg>,
-            Cloud: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>,
-            Thermometer: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>,
-            Car: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="22" height="13" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>, 
-            Link: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>,
-            ThumbsUp: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>,
-            Maximize2: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>,
-            X: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
-            Timer: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>,
-            Gift: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>,
-            Eye: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
-            SimCard: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2h8l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M6 4h8"/><path d="M6 8h8"/><path d="M6 12h12"/><path d="M6 16h12"/><path d="M6 20h12"/></svg>,
-            Upload: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
-            Shirt: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.38 3.4a2 2 0 0 0-1.8-1.11h-13.16a2 2 0 0 0-1.8 1.11l-2.62 5.88a2 2 0 0 0 1.84 2.72h2.16v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9h2.16a2 2 0 0 0 1.84-2.72l-2.62-5.88z"/><line x1="12" y1="8" x2="12" y2="14"/></svg>,
-            Navigation: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>,
-            DollarSign: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
-            Languages: (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>,
+            Plane: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h20"/><path d="M13 2l9 10-9 10"/><path d="M2 12l5-5m0 10l-5-5"/></svg>, 
+            MapPin: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+            Utensils: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>,
+            ShoppingBag: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>,
+            Camera: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>,
+            Coffee: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>,
+            Moon: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
+            CheckSquare: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>,
+            Calendar: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+            Info: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>,
+            ChevronRight: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>,
+            Train: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><path d="M2 12h20"/><path d="M4 7h16"/></svg>,
+            Bus: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M7 21v-2"/><path d="M17 21v-2"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="8" x2="21" y2="8"/></svg>,
+            AlertTriangle: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+            Hotel: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18"/><path d="M5 21V7"/><path d="M19 21V7"/><path d="M5 7a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v14"/><path d="M15 9a2 2 0 0 1 2-2h2"/></svg>,
+            Clock: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+            Map: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>,
+            Copy: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>,
+            ExternalLink: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>,
+            Sun: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>,
+            CloudRain: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>,
+            Snowflake: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/><path d="M20 16l-4-4 4-4"/><path d="M4 8l4 4-4 4"/><path d="M16 4l-4 4-4-4"/><path d="M8 20l4-4 4 4"/></svg>,
+            Cloud: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>,
+            Thermometer: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>,
+            Car: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="22" height="13" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>, 
+            Link: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>,
+            ThumbsUp: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>,
+            Maximize2: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>,
+            X: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+            Timer: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>,
+            Gift: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>,
+            Eye: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
+            SimCard: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2h8l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M6 4h8"/><path d="M6 8h8"/><path d="M6 12h12"/><path d="M6 16h12"/><path d="M6 20h12"/></svg>,
+            Upload: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
+            Shirt: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.38 3.4a2 2 0 0 0-1.8-1.11h-13.16a2 2 0 0 0-1.8 1.11l-2.62 5.88a2 2 0 0 0 1.84 2.72h2.16v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9h2.16a2 2 0 0 0 1.84-2.72l-2.62-5.88z"/><line x1="12" y1="8" x2="12" y2="14"/></svg>,
+            Navigation: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>,
+            DollarSign: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+            Languages: (props) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>,
         };
 
         // ---------------------------------------------------------
@@ -228,7 +228,7 @@
             day: 3,
             title: "梨大新村 & 弘大美食",
             date: "11/27 (三)",
-            image: "https://images.unsplash.com/photo-1618246146644-96c793168c9e?auto=format&fit=crop&w=800&q=80", // 更換為更有韓國街頭氛圍的圖
+            image: "https://images.unsplash.com/photo-1559070135-f259b369bf87?auto=format&fit=crop&w=800&q=80", // 更換為更有韓國街頭氛圍的圖
             weather: {
               condition: "晴時多雲",
               temp: "4°C - 8°C",
@@ -236,6 +236,12 @@
               desc: "體感寒冷，適合戶外活動，但要注意防風。"
             },
             events: [
+              {
+                time: "08:30", title: "早餐：Isaac Toast (梨大店)", koreanName: "이삭토스트 이대점", type: "food", icon: <Icons.Utensils size={16} />, duration: "1 小時",
+                desc: "韓國必吃國民吐司，現點現做。", mustEat: "火腿起司吐司 (햄치즈 토스트)\n培根薯餅吐司 (베이컨 포테이토 피자)",
+                reservationInfo: "現場點餐", bestTime: "09:00 前人較少",
+                nextMove: { to: "梨花女子大學", kor: "이화여자대학교", time: "5 分鐘", type: "步行", cost: "0" }
+              },
               { 
                   time: "09:30", title: "梨花女子大學", koreanName: "이화여자대학교", type: "activity", icon: <Icons.Camera size={16} />, duration: "2 小時", desc: "參觀 ECC 大峽谷、歐風校園",
                   nextMove: { to: "午餐(新村)", kor: "소신이쏘 신촌본점", time: "15 分鐘", type: "步行/公車", cost: "₩1,200" }
@@ -328,7 +334,7 @@
             },
             events: [
               { 
-                  time: "10:30", title: "⚠️ 換飯店：前往乙支路", koreanName: "호텔 더 보타닉 세운", type: "transport", icon: <Icons.Hotel size={16} />, duration: "1 小時", desc: "Check-out 龍山，建議搭計程車搬行李",
+                  time: "10:30", title: "⚠️ 換飯店：前往乙支路", koreanName: "호텔 더 보타닉 세운 명동", type: "transport", icon: <Icons.Hotel size={16} />, duration: "1 小時", desc: "Check-out 龍山 (Nine Tree ROKAUS)，搭計程車前往乙支路 (HOTEL THE BOTANIK SEWOON MYEONGDONG) 寄放行李。",
                   nextMove: { to: "廣藏市場", kor: "광장시장", time: "15 分鐘", type: "公車/步行", cost: "₩1,200" }
               },
               { 
@@ -378,9 +384,9 @@
                     { name: "Gentle Monster", kor: "젠틀몬스터", desc: "必買：潮流墨鏡，比台灣便宜且款式多" },
                     { name: "Lotte Young Plaza", kor: "롯데영플라자", desc: "特色：年輕品牌聚集地，好逛好買" }
                 ],
-                nextMove: { to: "回飯店", kor: "호텔 더 보타닉 세운", time: "10 分鐘", type: "計程車", cost: "₩5,000" }
+                nextMove: { to: "回飯店", kor: "호텔 더 보타닉 세운 명동", time: "10 分鐘", type: "計程車", cost: "₩5,000" }
               },
-              { time: "21:00", title: "飯店 Check-in", koreanName: "호텔 더 보타닉 세운", type: "stay", icon: <Icons.MapPin size={16} />, duration: "Check-in", desc: "HOTEL THE BOTANIK SEWOON" },
+              { time: "21:00", title: "飯店 Check-in", koreanName: "호텔 더 보타닉 세운 명동", type: "stay", icon: <Icons.MapPin size={16} />, duration: "Check-in", desc: "HOTEL THE BOTANIK SEWOON MYEONGDONG (乙支路)" },
             ]
           },
           {
@@ -418,8 +424,8 @@
                   reservationInfo: "現場排隊 (人潮眾多)", bestTime: "11:30 前入場",
                   nextMove: { to: "DDP", kor: "동대문디자인플라자", time: "10 分鐘", type: "步行", cost: "0" }
               },
-              { time: "14:00", title: "DDP 東大門設計廣場", koreanName: "동대문디자인플라자", type: "activity", icon: <Icons.Camera size={16} />, duration: "1.5 小時", desc: "最後拍照留念", nextMove: { to: "回飯店拿行李", kor: "호텔 더 보타닉 세운", time: "20 分鐘", type: "公車/地鐵", cost: "₩1,400" } },
-              { time: "15:30", title: "返回飯店拿行李", koreanName: "호텔 더 보타닉 세운", type: "transport", icon: <Icons.MapPin size={16} />, duration: "30 分鐘", desc: "準備前往機場", nextMove: { to: "仁川機場", kor: "인천국제공항", time: "80 分鐘", type: "機場巴士 6015", cost: "₩17,000" } },
+              { time: "14:00", title: "DDP 東大門設計廣場", koreanName: "동대문디자인플라자", type: "activity", icon: <Icons.Camera size={16} />, duration: "1.5 小時", desc: "最後拍照留念", nextMove: { to: "回飯店拿行李", kor: "호텔 더 보타닉 세운 명동", time: "20 分鐘", type: "公車/地鐵", cost: "₩1,400" } },
+              { time: "15:30", title: "返回飯店拿行李", koreanName: "호텔 더 보타닉 세운 명동", type: "transport", icon: <Icons.MapPin size={16} />, duration: "30 分鐘", desc: "準備前往機場", nextMove: { to: "仁川機場", kor: "인천국제공항", time: "80 分鐘", type: "機場巴士 6015", cost: "₩17,000" } },
               { 
                   time: "16:00", title: "出發往仁川機場", koreanName: "인천국제공항", type: "transport", icon: <Icons.Bus size={16} />, duration: "1.5 小時", 
                   desc: (<span>⚠️ 週五易塞車！搭 6015 巴士。<br/><span className="bg-yellow-200 px-1 rounded text-yellow-800 font-bold inline-block mt-1">🚌 搭乘點：國都飯店 (Kukdo Hotel) / 乙支路4街</span></span>),
@@ -839,7 +845,7 @@
                                 <span className={`font-bold text-sm px-2.5 py-1 rounded-lg w-fit ${isWarningDesc(event) ? 'text-[#EA5455] bg-[#EA5455]/10' : 'text-[#4A90E2] bg-[#4A90E2]/10'}`}>{event.time}</span>
                                 {event.shoppingGuide && event.shoppingGuide.some && event.shoppingGuide.some(item => item.isGift) && (
                                     <span className="text-[10px] font-bold text-white bg-[#FF69B4] px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
-                                        <Icons.Gift size={10} /> 伴手禮推薦
+                                        伴手禮推薦
                                     </span>
                                 )}
                             </div>
@@ -870,10 +876,8 @@
                           <div className="mt-4 mb-3 bg-gradient-to-r from-[#FFF3E0] to-[#FFEDD5] border-0 p-4 rounded-2xl cursor-pointer hover:shadow-sm transition-all group/food" onClick={() => onZoom({ title: event.title, items: event.mustEat, type: 'food', koreanName: event.koreanName })}>
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2 text-[#E67E22] font-extrabold text-sm">
-                                    <Icons.ThumbsUp size={16} className="fill-[#E67E22]" />
                                     必點推薦
                                 </div>
-                                <Icons.Maximize2 size={16} className="text-[#E67E22]/50 group-hover/food:opacity-100 transition-opacity" />
                             </div>
                             <p className="text-[15px] text-gray-800 leading-relaxed pl-6 whitespace-pre-line font-medium line-clamp-3">
                             {event.mustEat}
@@ -889,8 +893,7 @@
                               onClick={() => onZoom({ type: 'shopping_list', items: event.shoppingList })}
                               className="w-full bg-white border border-pink-200 p-3 rounded-2xl flex items-center justify-between gap-2 shadow-sm active:scale-95 transition-all hover:bg-pink-50"
                             >
-                                <div className="flex items-center gap-2 text-[#FF69B4] font-bold">
-                                    <Icons.ShoppingBag size={18} />
+                                <div className="flex items-center gap-2 text-[#FF69B4] font-bold text-sm">
                                     <span>必買圖鑑 (附照片)</span>
                                 </div>
                                 <div className="flex -space-x-2">
@@ -909,10 +912,8 @@
                           <div className="mt-3 mb-4 bg-gradient-to-r from-[#E0F7FA] to-[#B2EBF2] border-0 p-4 rounded-2xl cursor-pointer hover:shadow-sm transition-all group/highlight" onClick={() => onZoom({ title: event.title, items: event.highlight, type: 'highlight', koreanName: event.koreanName })}>
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2 text-[#0097A7] font-extrabold text-sm">
-                                    <Icons.Eye size={16} className="fill-[#0097A7]" />
                                     必看亮點
                                 </div>
-                                <Icons.Maximize2 size={16} className="text-[#0097A7]/50 group-hover/highlight:opacity-100 transition-opacity" />
                             </div>
                             <p className="text-[15px] text-gray-800 leading-relaxed pl-6 whitespace-pre-line font-medium line-clamp-3">
                             {event.highlight}
@@ -925,10 +926,8 @@
                           <div className="mt-3 mb-4 bg-gradient-to-r from-[#F3F0FF] to-[#E0D4FC] border-0 p-4 rounded-2xl cursor-pointer hover:shadow-sm transition-all group/shop" onClick={() => onZoom({ title: event.title, items: event.shoppingGuide, type: 'shopping' })}>
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2 text-[#7367F0] font-extrabold text-sm">
-                                    <Icons.ShoppingBag size={16} className="fill-[#7367F0]" />
                                     必買攻略
                                 </div>
-                                <Icons.Maximize2 size={16} className="text-[#7367F0]/50 group-hover/shop:opacity-100 transition-opacity" />
                             </div>
                             <p className="text-[15px] text-gray-800 leading-relaxed pl-6 whitespace-pre-line font-medium line-clamp-3">
                                 {event.shoppingGuide.map(s => s.name).join('、')}...
@@ -1106,7 +1105,6 @@
                            <div className="bg-white text-gray-900 p-6 rounded-3xl w-full max-w-sm shadow-2xl border-0 scale-105 transform transition-transform max-h-[80vh] overflow-y-auto relative" onClick={(e) => e.stopPropagation()}>
                                 <button onClick={() => setZoomedItem(null)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full p-1"><Icons.X size={20} /></button>
                                 <div className="flex items-center justify-center gap-2 mb-6 text-[#FF69B4]">
-                                    <Icons.ShoppingBag size={20} className="fill-[#FF69B4]" />
                                     <span className="font-bold text-xl">必買圖鑑</span>
                                 </div>
                                 <div className="space-y-4">
@@ -1133,7 +1131,6 @@
                             <div className="bg-white text-gray-900 p-6 rounded-3xl w-full max-w-sm shadow-2xl border-0 scale-105 transform transition-transform max-h-[80vh] overflow-y-auto relative" onClick={(e) => e.stopPropagation()}>
                                 <button onClick={() => setZoomedItem(null)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full p-1"><Icons.X size={20} /></button>
                                 <div className="flex items-center justify-center gap-2 mb-6 text-[#7367F0]">
-                                    <Icons.ShoppingBag size={20} className="fill-[#7367F0]" />
                                     <span className="font-bold text-xl">必買攻略</span>
                                 </div>
                                 <div className="space-y-4">
@@ -1159,12 +1156,7 @@
                                                     <Icons.Copy size={12} /> 複製韓文
                                                 </button>
                                                 <button 
-                                                    onClick={() => {
-                                                        const url = `nmap://search?query=${encodeURIComponent(item.kor)}&appname=com.example.myapp`;
-                                                        const webUrl = `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(item.kor)}`;
-                                                        window.location.href = url;
-                                                        setTimeout(() => { window.open(webUrl, '_blank'); }, 500);
-                                                    }}
+                                                    onClick={() => window.open(`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(item.kor)}`, '_blank')}
                                                     className="flex-1 bg-[#03C75A] text-white py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 hover:bg-[#02b350] active:scale-95 transition-all shadow-sm"
                                                 >
                                                     <Icons.Map size={12} /> Naver Map
@@ -1179,7 +1171,6 @@
                            <div className="bg-white text-gray-900 p-8 rounded-3xl w-full max-w-sm shadow-2xl border-0 scale-105 transform transition-transform relative" onClick={(e) => e.stopPropagation()}>
                               <button onClick={() => setZoomedItem(null)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full p-1"><Icons.X size={20} /></button>
                               <div className={`flex items-center justify-center gap-2 mb-4 ${zoomedItem.type === 'highlight' ? 'text-[#00CEC9]' : 'text-[#FF9F43]'}`}>
-                                 {zoomedItem.type === 'highlight' ? <Icons.Eye size={20} className="fill-[#00CEC9]" /> : <Icons.ThumbsUp size={20} className="fill-[#FF9F43]" />}
                                  <span className="font-bold text-xl">
                                     {zoomedItem.type === 'highlight' ? '必看亮點' : '必點菜單'}
                                  </span>
@@ -1197,12 +1188,7 @@
                                             <Icons.Copy size={14} /> 複製店名
                                         </button>
                                         <button 
-                                            onClick={() => {
-                                                const url = `nmap://search?query=${encodeURIComponent(zoomedItem.koreanName)}&appname=com.example.myapp`;
-                                                const webUrl = `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(zoomedItem.koreanName)}`;
-                                                window.location.href = url;
-                                                setTimeout(() => { window.open(webUrl, '_blank'); }, 500);
-                                            }}
+                                            onClick={() => window.open(`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(zoomedItem.koreanName)}`, '_blank')}
                                             className="flex-1 bg-[#03C75A] text-white py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-1 hover:bg-[#02b350] active:scale-95 transition-all shadow-sm"
                                         >
                                             <Icons.Map size={14} /> 導航至此
